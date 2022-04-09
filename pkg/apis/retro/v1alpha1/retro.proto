@@ -1,0 +1,31 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//     --go-grpc_out=require_unimplemented_servers=false:. --go-grpc_opt=paths=source_relative \
+//     pkg/apis/retro/v1alpha1/retro.proto
+
+syntax = "proto3";
+
+option go_package = "github.com/necatican/agile-tools/pkg/apis/retro/v1alpha1";
+
+package retro;
+import "pkg/apis/retro/v1alpha1/board/board.proto";
+
+
+service Retro {
+    rpc createBoard (CreateBoardRequest) returns (CreateBoardResponse) {}
+    rpc getBoard (retro.board.GetBoardRequest) returns (GetBoardResponse) {}
+}
+
+message CreateBoardRequest {
+    string name = 1;
+    string description = 2;
+}
+
+message CreateBoardResponse {
+    string id = 1;
+}
+
+
+message GetBoardResponse {
+    string name = 1;
+    string description = 2;
+}

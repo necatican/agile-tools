@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package retro.task;
+option go_package = "github.com/necatican/agile-tools/pkg/apis/retro/v1alpha1/task";
+import "google/protobuf/timestamp.proto";
+
+service Task {
+    rpc createTask(CreateTaskRequest) returns (CreateTaskResponse) {}
+    rpc getTask(GetTaskRequest) returns (GetTaskResponse) {}
+    rpc listTasks(ListTasksRequest) returns (ListTasksResponse) {}
+    rpc updateTask(UpdateTaskRequest) returns (UpdateTaskResponse) {}
+    rpc deleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {}
+    rpc upvoteTask(UpvoteTaskRequest) returns (UpvoteTaskResponse) {}
+   rpc mergeTask (MergeTaskRequest) returns (MergeTaskResponse) {}
+    rpc getTasks(GetTasksRequest) returns (stream GetTasksResponse) {}
+}
+
+message TaskObject {
+    string uuid = 1; // TODO: Consider using int32 instead. Do we really need UUIDs for board-bound tasks? Using UUID might be useful when creating  a global dashboard.
+    string text = 2;
+    string board_id = 3;
+    string column_id = 4;
+    string parent_task_uuid = 5;
+    repeated Comment comments = 6;
+    int32 upvotes = 7;
+
+    string created_by = 40;
+    string updated_by = 41;
+    google.protobuf.Timestamp created_at = 42;
+    google.protobuf.Timestamp updated_at = 43;
+}
+
+message Comment {
+    int32 id = 1;
+    string text = 2;
+    string task_id = 4;
+    int32 upvotes = 5;
+
+    string created_by = 40;
+    string updated_by = 41;
+    google.protobuf.Timestamp created_at = 42;
+    google.protobuf.Timestamp updated_at = 43;
+}
+
+message CreateTaskRequest {
+    string text = 1;
+    string board_id = 2;
+    string column_id = 3;
+}
+
+message CreateTaskResponse {
+    TaskObject task = 1;
+}
+
+message GetTaskRequest {
+    string uuid = 1;
+}
+
+message GetTaskResponse {
+    TaskObject task = 1;
+}
+
+message ListTasksRequest {
+    string board_id = 1;
+    string column_id = 2;
+    string parent_task_uuid = 3;
+    int32 limit = 4;
+}
+
+message ListTasksResponse {
+    repeated TaskObject tasks = 1;
+}
+
+message UpdateTaskRequest {
+    string uuid = 1;
+    string column_id = 2;
+    string text = 3;
+}
+
+message UpdateTaskResponse {
+    TaskObject task = 1;
+}
+
+message DeleteTaskRequest {
+    string uuid = 1;
+}
+
+message DeleteTaskResponse {
+}
+
+message UpvoteTaskRequest {
+    string uuid = 1;
+}
+
+message UpvoteTaskResponse {
+}
+
+message MergeTaskRequest {
+    string uuid = 1;
+    string parent_task_uuid = 2;
+}
+
+message MergeTaskResponse {
+}
+
+message GetTasksRequest {
+    string board_id = 1;
+    string column_id = 2;
+    string parent_task_uuid = 3;
+    int32 limit = 4;
+}
+
+message GetTasksResponse {
+    repeated TaskObject tasks = 1;
+}
+
+// message ListCommentsRequest {
+//     string task_id = 1;
+//     int32 limit = 2;
+//     int32 offset = 3;
+// }
+
+// message ListCommentsResponse {
+//     repeated Comment comments = 1;
+//     int32 total = 2;
+// }

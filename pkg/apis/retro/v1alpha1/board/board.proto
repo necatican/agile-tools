@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package retro.board;
+option go_package = "github.com/necatican/agile-tools/pkg/apis/retro/v1alpha1/board";
+import "pkg/apis/retro/v1alpha1/task/task.proto";
+import "google/protobuf/timestamp.proto";
+
+
+enum Visibility {
+    PRIVATE = 0;
+    PUBLIC = 1;
+    TEAM = 2;
+}
+
+service Board {
+    rpc createBoard (CreateBoardRequest) returns (CreateBoardResponse) {}
+    rpc getBoard (GetBoardRequest) returns (GetBoardResponse) {}
+    rpc listBoards (ListBoardRequest) returns (ListBoardResponse) {}
+    rpc updateBoard (UpdateBoardRequest) returns (UpdateBoardResponse) {}
+    rpc deleteBoard (DeleteBoardRequest) returns (DeleteBoardResponse) {}
+
+    rpc getBoardTasks (GetBoardTasksRequest) returns (stream GetBoardTasksResponse) {}
+}
+
+message BoardObject {
+    string uuid = 1;
+    string name = 2;
+    string description = 3;
+    string owner = 4;
+    repeated retro.task.TaskObject tasks = 5;
+    repeated Column columns = 6;
+
+    Visibility visibility = 7;
+    string team = 8;
+    repeated  Tag tags = 9;
+
+    string created_by = 40;
+    string updated_by = 41;
+    google.protobuf.Timestamp created_at = 42;
+    google.protobuf.Timestamp updated_at = 43;
+}
+
+message Tag {
+    string team_id = 1;
+    string tag = 2;
+    string color = 3;
+}
+
+message Column {
+    int32 id = 1;
+    string board_uuid = 2;
+    string name = 3;
+    string description = 4;
+
+    string created_by = 40;
+    string updated_by = 41;
+    google.protobuf.Timestamp created_at = 42;
+    google.protobuf.Timestamp updated_at = 43;
+}
+
+message CreateBoardRequest {
+    string name = 1;
+    string description = 2;
+    Visibility visibility = 3;
+}
+
+message CreateBoardResponse {
+    BoardObject board = 1;
+}
+
+message GetBoardRequest {
+    string id = 1;
+}
+
+message GetBoardResponse {
+    BoardObject board = 1;
+}
+
+message ListBoardRequest{
+    string team_name= 1;
+    string board_name= 2;
+    repeated string tags = 3;
+    int32 limit = 4;
+}
+
+message ListBoardResponse {
+    repeated BoardObject boards = 1;
+}
+
+message UpdateBoardRequest {
+    string uuid = 1;
+    string name = 2;
+    string description = 3;
+    repeated Column columns = 4;
+    repeated Tag tags = 5;
+}
+
+message UpdateBoardResponse {
+    BoardObject board = 1;
+}
+
+message DeleteBoardRequest {
+    string id = 1;
+}
+
+message DeleteBoardResponse {}
+
+message GetBoardTasksRequest {
+    string board_uuid = 1;
+}
+
+message GetBoardTasksResponse {
+    repeated retro.task.TaskObject tasks = 1;
+}
